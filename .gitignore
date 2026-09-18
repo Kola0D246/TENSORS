@@ -30,6 +30,7 @@ staticfiles/
 *.db
 instance/
 local_settings.py
+backend/apps_backup/
 
 # Django cache & migrations
 */migrations/__pycache__/
