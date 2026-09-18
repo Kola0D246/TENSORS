@@ -42,15 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # projecct apps
-    'apps.institutes',
-    'apps.scheduler',
-    'apps.users',
-    'apps.api',
-
     # third party apps
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'apps.users',
+    'apps.academics',
 ]
 
 MIDDLEWARE = [
@@ -87,11 +83,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.parse(
-        os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 # Password validation
