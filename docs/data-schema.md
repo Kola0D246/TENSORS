@@ -65,7 +65,7 @@
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| room_id | int | not null | System | Primary key, redex |
+| room_id | int | not null | System | Primary key |
 | building_name | String | not null | user | building_id |
 | room_num | String | not null | User | room num or lab name |
 | type | enum | not null | User | `Class` (theory), `Lab` (practical) |
@@ -78,7 +78,7 @@ NOTE: unique(building name, room_num)
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| department_id | int | not null | System | Primary key, redex |
+| department_id | int | not null | System | Primary key |
 | department_name | String | not null | User | — |
 
 ---
@@ -87,7 +87,7 @@ NOTE: unique(building name, room_num)
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| faculty_id | int | not null | System | Primary key, redex |
+| faculty_id | int | not null | System | Primary key |
 | faculty_name | String | not null | User | — |
 | qualification | String | not null | User | - |
 
@@ -96,9 +96,9 @@ NOTE: unique(building name, room_num)
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| course_id | int | not null | System | Primary key, redex |
+| course_id | int | not null | System | Primary key |
 | course_name | String | not null | User | — |
-| course_type | dropdown | not null | User | `major` / `minor` / `elective` |
+| course_type | enum | not null | User | `major` / `minor` / `elective` |
 | department_id | int | not null | User | Foreign key, M:1 |
 
 NOTE: Adjust for minor courses
@@ -124,6 +124,7 @@ NOTE: Adjust for minor courses
 | student_id | String | not null | User | Primary key, enrollment_no |
 | student_name | String | not null | User | — |
 | semester | enum(int) | not null | User | - |
+| department_id | int | not null | User | - |
 
 ## RELATIONSHIP TABLE
 
@@ -196,9 +197,9 @@ NOTE: course taken by student
 | subject_id | int | not null | AI | Foreign key |
 | faculty_id | int | not null | AI | Foreign key |
 | student_group_id | int | not null | AI | Foreign key |
-| status | dropdown | not null | System | `available` / `booked` / `blocked` (e.g., maintenance) |  
+| status | enum | not null | System | `available` / `booked` / `blocked` (e.g., maintenance) |  
 
-NOTE: how we implement icremental changes and backtracking. remove status
+NOTE: how we implement incremental changes and backtracking. remove status
 
 #### 🔒 Constraints
 
@@ -215,6 +216,6 @@ NOTE: how we implement icremental changes and backtracking. remove status
 ## 🧩 Notes
 
 - All IDs marked as *System* generated are unique and indexed.
-- dropdown values must be validated at insertion.
+- enum values must be validated at insertion.
 - Foreign keys maintain referential integrity across tables.
 - Time-related fields use UTC timestamps for consistency.
