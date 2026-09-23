@@ -10,7 +10,7 @@
 2. int -> integer
 3. String -> string
 4. encrypted -> password, sensitive data
-5. dropdown -> has selected values only
+5. enum -> has selected values only
 6. timestamp -> full date time YYYY-MM-DD HH:MM:SS
 7. time (hh:mm) -> hour:min
 
@@ -23,11 +23,12 @@
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
 | user_id | int | not null | System | Primary key, random, fixed size |
-| login_id | String | not null | User | Email or username for login |
+| login_id | String | not null | User | institute email id |
 | password | encrypted | not null | User | Hashed + Salted |
-| institute_id | int | not null | — | Foreign key, fixed size |
-| status | dropdown | not null | System | Active / Disabled / Locked |
-| created_at | timestamp | not null; constant | System | Time of account creation |
+| institute_id | int | not null | User | Foreign key, fixed size |
+| role | enum | not null | User | Management, HOD, Faculty, Student |
+| token_id | String | not null | System | login token |
+| created_at | timestamp | not null | System | Time of account creation, constant |
 | last_login | timestamp | not null | System | Updated every login (for audit/security) |
 
 ---
@@ -47,17 +48,9 @@
 
 ## 🏫 Data Given by College Management (Admin) — Institute Specific
 
-### 1. Institute Access Table
-
-| Field | Data Type | Constraint | Value By | Remark |
-|-------|------------|-------------|-----------|---------|
-| user_id | int | not null | System | Foreign key, redex |
-| role | dropdown | not null | User | `Admin`, `HOD`, `Faculty` |
-| department_id | int | if role != (HOD or Faculty) → all or null based on institute policy | System / User | Foreign key |
-
 ---
 
-### 2. TimeSlot
+### 1. TimeSlot
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
@@ -69,30 +62,114 @@
 
 ---
 
+### 2. Infra Table (Classrooms / Labs)
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| room_id | int | not null | System | Primary key, redex |
+| building_name | not null | user | building_id |
+| room_num | str | not null | User | room num or lab name |
+| type | enum | not null | User | `Class` (theory), `Lab` (practical) |
+| capacity | int | not null | User | Maximum seating capacity |
+
+NOTE: unique(building name, room_num)
+---
+
 ### 3. Departments Information
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
 | department_id | int | not null | System | Primary key, redex |
 | department_name | String | not null | User | — |
-| courses_table_id | int | not null | System | Auto-generate course table when department is created; foreign key |
-| faculty_table_id | int | not null | System | Auto-generate faculty table when department is created; foreign key |
 
 ---
 
-### 4. Infra Table (Classrooms / Labs)
+### 4. Faculty Table
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| room_id | int | not null | System | Primary key, redex |
-| department_id | String | not null | - | Foreign key, null if common use |
-| type | dropdown | not null | User | `Class` (theory), `Lab` (practical) |
-| capacity | int | not null | User | Maximum seating capacity |
-| subject_ids | int | not null | — | For labs: related subjects |
+| faculty_id | int | not null | System | Primary key, redex |
+| faculty_name | String | not null | User | — |
+| qualification | String | not null | User | - |
+
+
+### 5. Course Table
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| course_id | int | not null | System | Primary key, redex |
+| course_name | String | not null | User | — |
+| course_type | dropdown | not null | User | `major` / `elective` |
+| enrolled_students | int | not null | User | — |
+| department_id | str | not null | User | Foreign key, M:1 |
 
 ---
 
-### 5. Occupancy Table (Actual Timetable)
+### 6. Subject Table (One for Each Major/Minor Course)
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| subject_id | int | not null | System | Primary key, redex |
+| subject_name | String | not null | User | — |
+| course_id | str | not null | User | Foreign key, M:1 |
+| total_theory_hours | int | not null | User | — |
+| total_practical_hour | int | not null | User | — |
+
+---
+
+## RELATIONSHIP TABLE
+
+### 1. Room - Department (M:M)
+
+NOTE: if room are divided between department
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| room_id | int | not null | User | Foreign key |
+| department_id | int | not null | User | Foreign key |
+
+### 2. Subject - Lab (M:M)
+
+NOTE: each lab / class is assign for what subjects
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| room_id | int | not null | User | Foreign key |
+| subject_id | int | not null | User | Foreign key |
+
+### 3. Faculty - Department (M:M)
+
+NOTE: each faculty is assign for what department
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| faculty_id | int | not null | User | Foreign key |
+| department_id | int | not null | User | Foreign key |
+
+### 4.  Faculty - Subject (M:M)
+
+NOTE: each faculty is assign for what subject
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| faculty_id | int | not null | User | Foreign key |
+| subject_id | int | not null | User | Foreign key |
+
+### 5. Faculty Unavailability Table
+
+NOTE: faculty is unavailable
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| faculty_id | int | not null | System | Foreign key |
+| timeslot_id | int | not null | User | — |
+| reason | String | — | User | Reason for unavailability |
+
+---
+
+## OUTPUT TABLE
+
+### Occupancy Table (Actual Timetable)
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
@@ -102,7 +179,9 @@
 | subject_id | int | not null | AI | Foreign key |
 | faculty_id | int | not null | AI | Foreign key |
 | student_group_id | int | not null | AI | Foreign key |
-| status | dropdown | not null | System | `available` / `booked` / `blocked` (e.g., maintenance) |
+| status | dropdown | not null | System | `available` / `booked` / `blocked` (e.g., maintenance) |  
+
+NOTE: how we implement icremental changes and backtracking. remove status
 
 #### 🔒 Constraints
 
@@ -113,53 +192,6 @@
 5. If status is `available`, assigning valid `faculty_id`, `student_group_id`, and `subject_id` updates status → `booked`.  
    - Do not update if status is `booked` or `blocked`.  
    - When backtracking = true → reset these fields and revert status to `available`.
-
----
-
-## 🧑‍🏫 Data Given by Department (HOD) — Department Specific
-
-### 1. Course Table
-
-| Field | Data Type | Constraint | Value By | Remark |
-|-------|------------|-------------|-----------|---------|
-| course_id | int | not null | System | Primary key, redex |
-| course_name | String | not null | User | — |
-| course_type | dropdown | not null | User | `major` / `minor` / `elective` |
-| enrolled_students | int | not null | User | — |
-| subject_table_id | int | null if course_type is elective | System | Auto-generate subject table; foreign key |
-
----
-
-### 2. Subject Table (One for Each Major/Minor Course)
-
-| Field | Data Type | Constraint | Value By | Remark |
-|-------|------------|-------------|-----------|---------|
-| subject_id | int | not null | System | Primary key, redex |
-| subject_name | String | not null | User | — |
-| total_theory_hours | int | not null | User | — |
-| total_practical_hour | int | not null | User | — |
-
----
-
-### 3. Faculty Table
-
-| Field | Data Type | Constraint | Value By | Remark |
-|-------|------------|-------------|-----------|---------|
-| faculty_id | int | not null | System | Primary key, redex |
-| faculty_name | String | not null | User | — |
-| primary_subject_ids | int[] | not null | User | Main subjects taught; foreign key |
-| secondary_subject_ids | int[] | not null | User | Backup subjects (temporary replacement) |
-| unavailability_table_id | timestamp[] | not null | System | Linked to faculty unavailability periods |
-
----
-
-### 4. Faculty Unavailability Table
-
-| Field | Data Type | Constraint | Value By | Remark |
-|-------|------------|-------------|-----------|---------|
-| faculty_id | int | not null | System | Foreign key |
-| timeslot_id | int | not null | User | — |
-| reason | String | — | User | Reason for unavailability |
 
 ---
 
