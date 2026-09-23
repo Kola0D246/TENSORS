@@ -22,10 +22,10 @@
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| user_id | int | not null | System | Primary key, random, fixed size |
+| user_id | int | not null | System | Primary key |
 | login_id | String | not null | User | institute email id |
 | password | encrypted | not null | User | Hashed + Salted |
-| institute_id | int | not null | User | Foreign key, fixed size |
+| institute_id | int | not null | User | Foreign key |
 | role | enum | not null | User | Management, HOD, Faculty, Student |
 | token_id | String | not null | System | login token |
 | created_at | timestamp | not null | System | Time of account creation, constant |
@@ -42,7 +42,6 @@
 | affiliation | String | not null | User | — |
 | location | String | not null | User | — |
 | official_communication | String | not null | User | Contact method for institute |
-| institute_access_table_id | int | not null | User | — |
 
 ---
 
@@ -67,8 +66,8 @@
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
 | room_id | int | not null | System | Primary key, redex |
-| building_name | not null | user | building_id |
-| room_num | str | not null | User | room num or lab name |
+| building_name | String | not null | user | building_id |
+| room_num | String | not null | User | room num or lab name |
 | type | enum | not null | User | `Class` (theory), `Lab` (practical) |
 | capacity | int | not null | User | Maximum seating capacity |
 
@@ -99,23 +98,32 @@ NOTE: unique(building name, room_num)
 |-------|------------|-------------|-----------|---------|
 | course_id | int | not null | System | Primary key, redex |
 | course_name | String | not null | User | — |
-| course_type | dropdown | not null | User | `major` / `elective` |
-| enrolled_students | int | not null | User | — |
-| department_id | str | not null | User | Foreign key, M:1 |
+| course_type | dropdown | not null | User | `major` / `minor` / `elective` |
+| department_id | int | not null | User | Foreign key, M:1 |
+
+NOTE: Adjust for minor courses
 
 ---
 
-### 6. Subject Table (One for Each Major/Minor Course)
+### 6. Subject Table
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
 | subject_id | int | not null | System | Primary key, redex |
 | subject_name | String | not null | User | — |
-| course_id | str | not null | User | Foreign key, M:1 |
+| course_id | int | not null | User | Foreign key, M:1 |
 | total_theory_hours | int | not null | User | — |
 | total_practical_hour | int | not null | User | — |
 
 ---
+
+### 7. Student Table 
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| student_id | String | not null | User | Primary key, enrollment_no |
+| student_name | String | not null | User | — |
+| semester | enum(int) | not null | User | - |
 
 ## RELATIONSHIP TABLE
 
@@ -164,6 +172,15 @@ NOTE: faculty is unavailable
 | faculty_id | int | not null | System | Foreign key |
 | timeslot_id | int | not null | User | — |
 | reason | String | — | User | Reason for unavailability |
+
+### 6. Student Course Table
+
+NOTE: course taken by student
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| student_id | String | not null | User | Foreign key |
+| course_id | int | not null | User | Foreign key |
 
 ---
 
