@@ -1,7 +1,3 @@
-######################
-What we have done so far
-######################
-
 1. Core Backend Architecture
 
 Designed and scaffolded a modular Django backend under backend/apps/ with four key apps:
