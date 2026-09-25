@@ -126,8 +126,26 @@ NOTE: Should we add semester feild also?
 NOTE: Check if same course can be on different department (making M:M relation)
 
 ---
+## 6. Semester Table
 
-### 6. Subject Table
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| semester_id | int | not null | System | Primary key, auto_increment |
+| course_number | int | not null | User | 1-8 |
+
+---
+## 7. CourseSemester Table
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| course_semester_id | int | not null | System | Primary key, auto_increment |
+| course_id | int | not null | User | Foreign key |
+| semester_id | int | not null | User | Foreign key |
+
+NOTE: unique(course_id, semester_id)
+
+---
+### 8. Subject Table
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
@@ -139,7 +157,7 @@ NOTE: Check if same course can be on different department (making M:M relation)
 
 ---
 
-### 7. Faculty Unavailability Table
+### 9. Faculty Unavailability Table
 
 NOTE: faculty is unavailable
 
@@ -154,7 +172,7 @@ NOTE: add status only if needing approval from HOD (which will cause unnccesssar
 
 ---
 
-### 8. Student Table 
+### 10. Student Table 
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
