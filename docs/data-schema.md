@@ -6,13 +6,12 @@
 
 ## 🌐 Data type used
 
-1. key -> datatype for primary and foreign key. can be int or hexdec, but must be same across database
-2. int -> integer
-3. String -> string
-4. encrypted -> password, sensitive data
-5. enum -> has selected values only
-6. timestamp -> full date time YYYY-MM-DD HH:MM:SS
-7. time (hh:mm) -> hour:min
+1. int -> integer
+2. String -> string
+3. encrypted -> password, sensitive data
+4. enum -> has selected values only
+5. timestamp -> full date time YYYY-MM-DD HH:MM:SS
+6. time (hh:mm) -> hour:min
 
 ---
 
@@ -22,8 +21,7 @@
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| user_id | int | not null | System | Primary key |
-| login_id | String | not null | User | institute email id |
+| login_id | String | not null, unique | User | Primary key, institute email id |
 | password | encrypted | not null | User | Hashed + Salted |
 | institute_id | int | not null | User | Foreign key |
 | role | enum | not null | User | Management, HOD, Faculty, Student |
@@ -31,54 +29,76 @@
 | created_at | timestamp | not null | System | Time of account creation, constant |
 | last_login | timestamp | not null | System | Updated every login (for audit/security) |
 
+NOTE: institute_id is only for multiple institute setup
+
 ---
 
 ### 2. Institute Table
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| institute_id | int | not null | System | Primary key, random, fixed size |
-| name | String | not null | User | — |
+| institute_id | int | not null | System | Primary key, auto_increment |
+| institute_name | String | not null | User | — |
 | affiliation | String | not null | User | — |
 | location | String | not null | User | — |
-| official_communication | String | not null | User | Contact method for institute |
+| contact_info | String | not null | User | Official email |
+| email_domain | String | not null | User | for auth verification |
+
+NOTE : If made for single college, this information will be setup as json file
 
 ---
 
-## 🏫 Data Given by College Management (Admin) — Institute Specific
+## 🏫 Data Given by College Management
 
 ---
 
 ### 1. TimeSlot
 
 | Field | Data Type | Constraint | Value By | Remark |
-|-------|------------|-------------|-----------|---------|
-| timeslot_id | int | not null | System | Primary key |
-| day | String | not null | User | — |
+|-------|-----------|------------|----------|--------|
+| timeslot_id | int | not null | System | Primary key, auto_increment |
+| day | enum | not null | User | working days |
 | period_num | int | not null | User | — |
+
+---
+
+### 2. Period time 
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|-----------|------------|----------|--------|
+| period_num | int | not null | User | Primary key |
 | start_time | time (hh:mm) | not null | User | — |
 | end_time | time (hh:mm) | not null | User | — |
 
 ---
 
-### 2. Infra Table (Classrooms / Labs)
+### 2. Building Table
 
 | Field | Data Type | Constraint | Value By | Remark |
-|-------|------------|-------------|-----------|---------|
-| room_id | int | not null | System | Primary key, redex |
-| building_name | String | not null | user | building_id |
+|-------|-----------|------------|----------|--------|
+| building_id | int | not null | System | Primary key, auto_increment |
+| building_name | String | not null | User | - |
+
+### 2. Room Table (Classrooms / Labs)
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|-----------|------------|----------|--------|
+| room_id | int | not null | System | Primary key, auto_increment |
+| building_id | int | not null | User | Foreign key, M:1 |
 | room_num | String | not null | User | room num or lab name |
-| type | enum | not null | User | `Class` (theory), `Lab` (practical) |
+| room_type | enum | not null | User | `Class` (theory), `smart class` (projector), `Lab` |
 | capacity | int | not null | User | Maximum seating capacity |
 
 NOTE: unique(building name, room_num)
+NOTE: Building table and building_id only exist if college opt for multiple building
+
 ---
 
 ### 3. Departments Information
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| department_id | int | not null | System | Primary key, redex |
+| department_id | int | not null | System | Primary key, auto_increment |
 | department_name | String | not null | User | — |
 
 ---
@@ -87,7 +107,7 @@ NOTE: unique(building name, room_num)
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| faculty_id | int | not null | System | Primary key, redex |
+| employee_id | String | not null | User | Primary key |
 | faculty_name | String | not null | User | — |
 | qualification | String | not null | User | - |
 
@@ -96,12 +116,14 @@ NOTE: unique(building name, room_num)
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| course_id | int | not null | System | Primary key, redex |
+| course_id | int | not null | System | Primary key, auto_increment |
 | course_name | String | not null | User | — |
-| course_type | dropdown | not null | User | `major` / `minor` / `elective` |
+| course_type | enum | not null | User | `major` / `minor` / `elective` |
 | department_id | int | not null | User | Foreign key, M:1 |
 
 NOTE: Adjust for minor courses
+NOTE: Should we add semester feild also?
+NOTE: Check if same course can be on different department (making M:M relation)
 
 ---
 
@@ -109,7 +131,7 @@ NOTE: Adjust for minor courses
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| subject_id | int | not null | System | Primary key, redex |
+| subject_code | String | not null | User | Primary key |
 | subject_name | String | not null | User | — |
 | course_id | int | not null | User | Foreign key, M:1 |
 | total_theory_hours | int | not null | User | — |
@@ -117,13 +139,31 @@ NOTE: Adjust for minor courses
 
 ---
 
-### 7. Student Table 
+### 7. Faculty Unavailability Table
+
+NOTE: faculty is unavailable
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| student_id | String | not null | User | Primary key, enrollment_no |
+| employee_id | String | not null | User | Foreign key |
+| timeslot_id | int | not null | User | — |
+| reason | String | — | User | Reason for unavailability |
+| status | enum  | - | User | Whether leave is approved or not |
+
+NOTE: add status only if needing approval from HOD (which will cause unnccesssary delay. HOD can view stat and can handle misuse of unavailibility)
+
+---
+
+### 8. Student Table 
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| enrollment_no | String | not null | User | Primary key |
 | student_name | String | not null | User | — |
+| department_id | int | not null | User | Foreign key, M:1 |
 | semester | enum(int) | not null | User | - |
+
+NOTE: Connect student, faculty with user table.
 
 ## RELATIONSHIP TABLE
 
@@ -143,7 +183,7 @@ NOTE: each lab / class is assign for what subjects
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
 | room_id | int | not null | User | Foreign key |
-| subject_id | int | not null | User | Foreign key |
+| subject_code | String | not null | User | Foreign key |
 
 ### 3. Faculty - Department (M:M)
 
@@ -153,6 +193,7 @@ NOTE: each faculty is assign for what department
 |-------|------------|-------------|-----------|---------|
 | faculty_id | int | not null | User | Foreign key |
 | department_id | int | not null | User | Foreign key |
+| designation | enum | not null | User | 
 
 ### 4.  Faculty - Subject (M:M)
 
@@ -163,23 +204,15 @@ NOTE: each faculty is assign for what subject
 | faculty_id | int | not null | User | Foreign key |
 | subject_id | int | not null | User | Foreign key |
 
-### 5. Faculty Unavailability Table
+NOTE: since we have faculty-subject table, do we also need to have faculty-department table?
 
-NOTE: faculty is unavailable
-
-| Field | Data Type | Constraint | Value By | Remark |
-|-------|------------|-------------|-----------|---------|
-| faculty_id | int | not null | System | Foreign key |
-| timeslot_id | int | not null | User | — |
-| reason | String | — | User | Reason for unavailability |
-
-### 6. Student Course Table
+### 5. Student Course Table
 
 NOTE: course taken by student
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| student_id | String | not null | User | Foreign key |
+| enrollment_no | String | not null | User | Foreign key |
 | course_id | int | not null | User | Foreign key |
 
 ---
@@ -190,15 +223,12 @@ NOTE: course taken by student
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| event_id | int | not null | System | Primary key, count |
+| event_id | int | not null | System | Primary key, auto_increment |
 | room_id | int | not null | AI | Foreign key, default primary sorting |
 | timeslot_id | int | not null | AI | Foreign key, default secondary sorting |
 | subject_id | int | not null | AI | Foreign key |
 | faculty_id | int | not null | AI | Foreign key |
 | student_group_id | int | not null | AI | Foreign key |
-| status | dropdown | not null | System | `available` / `booked` / `blocked` (e.g., maintenance) |  
-
-NOTE: how we implement icremental changes and backtracking. remove status
 
 #### 🔒 Constraints
 
@@ -215,6 +245,6 @@ NOTE: how we implement icremental changes and backtracking. remove status
 ## 🧩 Notes
 
 - All IDs marked as *System* generated are unique and indexed.
-- dropdown values must be validated at insertion.
+- enum values must be validated at insertion.
 - Foreign keys maintain referential integrity across tables.
 - Time-related fields use UTC timestamps for consistency.
