@@ -1,7 +1,7 @@
 # 🧩 Contributing Guidelines
 
-This document defines how **Team TENSORS** collaborates and manages code for the SIH 2025 project.  
-External contributions are **not accepted** — this is an internal team repository.
+This document defines how **Team TENSORS** collaborates and manages code for Smart Schedular project.  
+External contributions are **not accepted**.
 
 ---
 
@@ -9,7 +9,7 @@ External contributions are **not accepted** — this is an internal team reposit
 
 - Each member works on their assigned module or feature branch.
 - Always **sync with the `dev` branch** before starting new work.
-- Avoid direct commits to `main` — it should only contain stable, reviewed code.
+- Avoid direct commits to `main` — it should only contain stable, live code.
 
 ---
 
@@ -18,7 +18,7 @@ External contributions are **not accepted** — this is an internal team reposit
 We follow a simple branching model:
 
 | Branch | Purpose |
-|---------|----------|
+|--------|---------|
 | `main` | Stable, production-ready code |
 | `dev` | Integration branch for team development |
 | `feature/<name>` | New features or modules (e.g., `feature/login-system`) |
@@ -52,23 +52,6 @@ Then open a Pull Request (PR) to merge into dev.
 
 - Open a new issue with the label `enhancement`.
 - Describe your idea, its purpose, and possible implementation.
-
----
-
-## 💬 Code Style
-
-1. Follow PEP8 for Python code.
-2. Use meaningful variable and function names.
-3. Write docstrings for functions and classes.
-4. Run linters before committing if possible.
-
----
-
-## 🧪 Testing
-
-1. Ensure your code passes all tests.
-2. Ensure any major change does not break existing modules.
-3. Add test data or mock inputs if needed.
 
 ---
 

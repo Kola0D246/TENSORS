@@ -1,11 +1,5 @@
 # 🧠 Smart Classroom and Timetable Scheduler
 
-**Team Name:** TENSORS  
-**Hackathon:** Smart India Hackathon 2025  
-**Problem Statement ID:** 25028  
-**Theme:** Smart Education  
-**Category:** Software  
-
 ---
 
 ## 📌 Overview
@@ -72,43 +66,6 @@ A **web-based platform** that:
 | **Hosting** | AWS / GCP / Azure |
 | **Version Control** | Git + GitHub |
 
----
-
-## 🧮 Database Schema (Simplified)
-
-**Core Tables:**
-
-- `login_credential`
-- `institute`
-- `institute_access`
-- `department`
-- `faculty`
-- `course`
-- `subject`
-- `infra`
-- `timeslot`
-- `occupancy` (actual timetable)
-
-**Key Constraints:**
-
-- No duplicate `(room_id, timeslot_id)`  
-- Faculty/student cannot have overlapping slots  
-- Faculty ↔ subject ↔ student linkage must hold  
-
----
-
-## 🔄 User Workflow
-
-1. **Institute Registration** → Admin verification → `institute_id` generated  
-2. **Admin Setup** → Departments, Infrastructure, Time Slots  
-3. **HOD Setup** → Courses, Faculty, Students  
-4. **AI Scheduler** → Generates base timetable (department-wise)  
-5. **Review & Approval** → Admin/HOD finalize  
-6. **Publication** → Embed timetable on website  
-7. **Dynamic Updates** → Adjust for faculty/room changes in real-time  
-
----
-
 ## 🧰 Installation & Setup
 
 ```bash
@@ -118,16 +75,10 @@ git clone https://github.com/<your-repo>/smart-scheduler.git
 # Navigate to project folder
 cd smart-scheduler
 
-# Backend setup (example: Django)
+# Backend setup
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
-
-# Frontend setup
-cd frontend
-npm install
-npm start
-```
 
 ---
 
@@ -136,100 +87,7 @@ npm start
 1. Base Generation: Constraint Satisfaction (Google OR-Tools)
 2. Incremental Updates: OptaPlanner for localized changes
 3. Minor Adjustments: Rule-based swapping system
-4. Optional Learning: Reinforcement Learning for adaptive optimization
-
----
-
-## 🧩 Roles & Permissions
-
-| Role | Capabilities |
-|------|--------------|
-| Admin | Manage institute, approve timetables, monitor analytics |
-| HOD | Enter course/faculty/student data, review timetables |
-| Faculty | Update availability, view personal schedule |
-| Student | View timetable, select electives (optional) |
-
----
-
-## 🚀 Deployment
-
-1. Add deployment instructions (college server or cloud).
-2. Supports both local hosting (college servers) and cloud deployment (AWS/GCP/Azure).
-3. The timetable can be embedded via \<iframe\> or integrated using APIs.
-
----
-
-## 📊 Analytics & Reports
-
-Classroom utilization %
-
-Faculty workload distribution
-
-Clash detection reports
-
-Export as PDF/Excel
-
-Historical version tracking
-
----
-
-## ⚠️ Risks & Mitigation
-
-| Risk | Mitigation |
-|------|------------|
-| Data inaccuracy | Validation & approval workflow |
-| Scheduling complexity | CSP + modular rules |
-| Scalability | Cloud hosting + caching |
-| User resistance | Simple UI + manual override option |
-| Downtime | Auto backups + redundancy |
-
----
-
-## 🌍 Impact
-
-| Stakeholder | Impact |
-|-------------|--------|
-| Institutions | Efficient scheduling, better infrastructure use |
-| Faculty | Balanced workload, real-time updates |
-| Students | Clash-free, flexible timetables |
-| System | Transparent, policy-compliant, scalable |
-
----
-
-## 🧪 Research & References
-
-1. List the studies, papers, or datasets you based your work on.
-2. AICTE Faculty Workload Regulations
-3. Case Study: IIM Calcutta Timetabling System
-4. Research: CSP & Integer Programming-based scheduling optimization
-5. Tools Compared: UniTime, FET, OptaPlanner, Google OR-Tools
-
----
-
-## 🧩 Future Scope
-
-1. Integration with LMS (Moodle, Google Classroom)
-2. AI-based faculty recommendation system
-3. Predictive analytics for infrastructure planning
-4. Mobile app version for faculty and students
-
----
-
-## 🏁 Conclusion
-
-This system offers a smart, adaptive, and scalable approach to timetable scheduling that reduces human error, optimizes resources, and supports the NEP 2020 framework of flexible multidisciplinary learning.
-
----
 
 ## 📜 License
 
-This project is licensed under the **Apache License 2.0**.
-
-You are free to:
-
-- Use, modify, and distribute this code for personal or academic purposes
-- Reference or build upon it, provided proper credit is given.
-
-Commercial use of this software or deployment for institutional purposes requires explicit written permission from the project owner/team TENSORS.
-
-For commercial inquiries or collaboration, contact: [your email]
+You are allowed to view or fork the repo, but not permitted to use, copy, modify, or distribute this software in your own projects
