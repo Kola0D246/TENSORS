@@ -145,6 +145,8 @@ NOTE: Check if same course can be on different department (making M:M relation)
 | total_theory_hours | int | not null | User | — |
 | total_practical_hour | int | not null | User | — |
 
+NOTE: in frontend, mention both subject_code and subject_name
+
 ---
 
 ### 8. Faculty Unavailability Table
