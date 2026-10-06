@@ -1,35 +1,8 @@
-# ======================
-# Python
-# ======================
 __pycache__/
-*.py[cod]
-*$py.class
+sensitive_info.txt
 
 # Virtual environment
-env/
 venv/
-ENV/
-.venv/
-
-# ======================
-# Django / Project files
-# ======================
-*.log
-*.pot
-*.pyc
-*.pyo
-*.pyd
-*.sqlite3
-db.sqlite3
-media/
-staticfiles/
-*.pid
-*.seed
-*.cover
-*.mo
-*.db
-instance/
-local_settings.py
 
 # Django cache & migrations
 */migrations/__pycache__/
@@ -37,74 +10,10 @@ local_settings.py
 */migrations/*.pyo
 */migrations/*.pyd
 
-# ======================
 # IDE / Editor
-# ======================
 .vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
 
-# ======================
-# OS / System
-# ======================
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# ======================
-# Jupyter / AI notebooks
-# ======================
-.ipynb_checkpoints/
-*.ipynb
-
-# ======================
-# Frontend (React/Vue/etc.)
-# ======================
-node_modules/
-dist/
-build/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# ======================
-# Environment / Secrets
-# ======================
+# Environment
 .env
-*.env
 .env.*
-config.ini
-secrets.json
-
-# ======================
-# Python Packaging
-# ======================
-*.egg-info/
-.eggs/
-MANIFEST
-*.spec
-
-# ======================
-# Reports / Cache / Coverage
-# ======================
-htmlcov/
-.tox/
-.nox/
-coverage.xml
-*.cover
-.cache/
-pytest_cache/
-.pytest_cache/
-.coverage
-coverage/
-reports/
-
-# ======================
-# Temporary files
-# ======================
-*.tmp
-*.temp
-*.bak
-*.swp
-*.swo
+!.env.example
