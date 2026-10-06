@@ -131,8 +131,16 @@ NOTE: Should we add semester feild also?
 NOTE: Check if same course can be on different department (making M:M relation)
 
 ---
+## 6. Semester Table
 
-### 6. Subject Table
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| semester_id | int | not null | System | Primary key, auto_increment |
+| semester | int | not null | User | 1-8 |
+
+---
+
+### 7. Subject Table
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
@@ -142,9 +150,11 @@ NOTE: Check if same course can be on different department (making M:M relation)
 | total_theory_hours | int | not null | User | — |
 | total_practical_hour | int | not null | User | — |
 
+NOTE: in frontend, mention both subject_code and subject_name
+
 ---
 
-### 7. Faculty Unavailability Table
+### 8. Faculty Unavailability Table
 
 NOTE: faculty is unavailable
 
@@ -156,7 +166,7 @@ NOTE: faculty is unavailable
 
 ---
 
-### 8. Student Table 
+### 9. Student Table 
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
@@ -187,7 +197,17 @@ NOTE: each lab / class is assign for what subjects
 | room_id | int | not null | User | Foreign key |
 | subject_code | string | not null | User | Foreign key |
 
-### 3. Faculty - Department (M:M)
+### 3. CourseSemester Table
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| course_semester_id | int | not null | System | Primary key, auto_increment |
+| course_id | int | not null | User | Foreign key |
+| semester_id | int | not null | User | Foreign key |
+
+NOTE: unique(course_id, semester_id)
+
+### 4. Faculty - Department (M:M)
 
 NOTE: each faculty is assign for what department
 
@@ -197,7 +217,7 @@ NOTE: each faculty is assign for what department
 | department_id | int | not null | User | Foreign key |
 | designation | enum | not null | User | 
 
-### 4.  Faculty - Subject (M:M)
+### 5.  Faculty - Subject (M:M)
 
 NOTE: each faculty is assign for what subject
 
@@ -208,7 +228,7 @@ NOTE: each faculty is assign for what subject
 
 NOTE: since we have faculty-subject table, do we also need to have faculty-department table?
 
-### 5. Student Course Table
+### 6. Student Course Table
 
 NOTE: course taken by student
 
