@@ -1,46 +1,83 @@
 from django.db import models
 
-class Department(models.Model):
-    department_name = models.CharField(max_length=255)
+class TimeSlot(models.Model):
+    day = models.CharField(max_length=20)
+    period = models.IntegerField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
 
     def __str__(self):
-        return f"{self.department_name}"
+        return f"{self.day} {self.period}"
+
+class Room(models.Model):
+    room_no = models.CharField(max_length= 200)
+    building_name = models.CharField(max_length=200)
+    room_type = models.CharField(max_length=20, choices=[
+        ('class', 'Class'), ('lab', 'Lab'), ('smartClass', 'Smart Class')
+    ])
+    capacity = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.building_name} {self.room_no}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["room_no", "building_name"], 
+                name="unique_roomno_building"
+            )
+        ]
+
+class Department(models.Model):
+    department_name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.department_name
 
 class Course(models.Model):
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     course_name = models.CharField(max_length=255)
-    course_type = models.CharField(max_length=10, choices=[('major', 'Major'), ('minor', 'Minor'), ('elective', 'Elective')])
-    enrolled_students = models.IntegerField(default=0)
+    course_type = models.CharField(max_length=10, choices=[
+        ('major', 'Major'), ('minor', 'Minor'), ('elective', 'Elective')
+    ])
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.course_name
+        return f"{self.department} {self.course_name}"
 
 class Subject(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    subject_code = models.CharField(max_length=20, primary_key=True)
     subject_name = models.CharField(max_length=255)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     total_theory_hours = models.IntegerField()
     total_practical_hour = models.IntegerField()
 
     def __str__(self):
-        return self.subject_name
+        return f"{self.subject_code} {self.subject_name}"
 
 class Faculty(models.Model):
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    faculty_name = models.CharField(max_length=255)
-    primary_subjects = models.ManyToManyField(Subject, related_name='primary_faculties')
-    secondary_subjects = models.ManyToManyField(Subject, related_name='secondary_faculties', blank=True)
-    user = models.OneToOneField('users.User', on_delete=models.SET_NULL, null=True, blank=True, related_name='faculty_profile')
+    employee_id = models.CharField(max_length=20, primary_key=True)
+    faculty_name = models.CharField(max_length=200)
+    qualifications = models.CharField(max_length=1200)
 
     def __str__(self):
         return self.faculty_name
 
-class Student(models.Model):
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    enrollment_no = models.CharField(max_length=100, unique=True)
-    majors = models.ManyToManyField(Course, related_name='major_students', blank=True)
-    minors = models.ManyToManyField(Course, related_name='minor_students', blank=True)
-    electives = models.ManyToManyField(Course, related_name='elective_students', blank=True)
-    user = models.OneToOneField('users.User', on_delete=models.SET_NULL, null=True, blank=True, related_name='student_profile')
+class FacultyUnavailability(models.Model):    
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
+    timeslot = models.ForeignKey(TimeSlot, on_delete=models.CASCADE)
+    reason = models.CharField(max_length=1200)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.enrollment_no
+        return f"{self.faculty} unavailable at {self.timeslot.day} {self.timeslot.period}"
+
+class Student(models.Model):
+    enrollment_no = models.CharField(max_length=50, primary_key=True)
+    student_name = models.CharField(max_length=200)
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL)
+    semester = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.enrollment_no} {self.student_name}"
+
+# Relation ship models

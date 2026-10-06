@@ -17,11 +17,11 @@
 | Field | Type | Required | Description |
 |--------|------|-----------|-------------|
 | Department Name | String | ✅ | Name of department |
-| Classroom/Lab Info | Object | ✅ | Room number, type, capacity, smart class, department |
-| Time Slots | Object | ✅ | Periods, start time, end time, recess |
-| Working Days | List | ✅ | e.g. Mon–Sat |
-| Academic Policies | Object | ✅ | Majors, minors, electives per semester |
-| Unavailability Updates | Object | ❌ | Maintenance or blocked slots |
+| Classroom/Lab Info | Object | ✅ | Room number, type, capacity, department |
+| Time Slots | Object | ✅ | Periods, start time, end time |
+| Faculty Info | List | ✅ | Name |
+| Student Info | List | ✅ | Enrollment no, opted major/minor/electives |
+
 
 ---
 
@@ -29,11 +29,8 @@
 
 | Field | Type | Required | Description |
 |--------|------|-----------|-------------|
-| Course Name | String | ✅ | e.g., B.Tech CSE Sem 3 |
-| Course Type | Enum | ✅ | Major / Minor / Elective |
+| Course info | Objects | ✅ | Course Name, type |
 | Subjects | List | ✅ | Subject name, theory/practical hours |
-| Faculty Info | List | ✅ | Name, designation, primary/secondary subjects |
-| Student Info | List | ✅ | Enrollment no, opted major/minor/electives |
 
 ---
 
@@ -41,19 +38,7 @@
 
 | Field | Type | Required | Description |
 |--------|------|-----------|-------------|
-| Availability | Schedule | ✅ | Days and times faculty is available |
-| Leave Information | DateRange | ❌ | Planned leave days |
-| Preferred Subjects | List | ❌ | Subject preference order |
-
----
-
-## 5️⃣ Student Inputs (by institute)
-
-| Field | Type | Required | Description |
-|--------|------|-----------|-------------|
-| Enrollment Number | String | ✅ | Unique ID |
-| Chosen Majors/Minors | List | ✅ | As per NEP 2020 flexibility |
-| Elective Preferences | List | ✅ | Ranked elective choices |
+| Unavailability | Schedule | ✅ | Days and times faculty is available |
 
 ---
 

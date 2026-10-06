@@ -1,14 +1,10 @@
 # 🗄️ Data Schema
 
-## 🌐 Universal Constraint
-
-> All user-defined fields of two distinct rows in a table **cannot have the same value simultaneously**.
-
 ## 🌐 Data type used
 
 1. int -> integer
-2. String -> string
-3. encrypted -> password, sensitive data
+2. string -> string
+3. hashed -> password, sensitive data
 4. enum -> has selected values only
 5. timestamp -> full date time YYYY-MM-DD HH:MM:SS
 6. time (hh:mm) -> hour:min
@@ -21,15 +17,28 @@
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| login_id | String | not null, unique | User | Primary key, institute email id |
-| password | encrypted | not null | User | Hashed + Salted |
-| institute_id | int | not null | User | Foreign key |
+| login_id | string | not null, unique | User | Primary key, institute email id |
+| password | hashed | not null | User | Hashed + Salted |
+| institute_id* | int | not null | User | Foreign key |
 | role | enum | not null | User | Management, HOD, Faculty, Student |
-| token_id | String | not null | System | login token |
 | created_at | timestamp | not null | System | Time of account creation, constant |
+
+*NOTE: institute_id is only for multiple institute setup
+---
+
+### 2. Session Table
+
+| Field | Data Type | Constraint | Value By | Remark |
+|-------|------------|-------------|-----------|---------|
+| token_id | string | not null | System | primary key, random UUID |
+| login_id | string | not null, unique | User | Foreign key |
 | last_login | timestamp | not null | System | Updated every login (for audit/security) |
 
-NOTE: institute_id is only for multiple institute setup
+NOTE: unique login id means one login_id can be active at only single device at a time
+
+---
+
+## 🏫 Data Given by College Management
 
 ---
 
@@ -38,17 +47,13 @@ NOTE: institute_id is only for multiple institute setup
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
 | institute_id | int | not null | System | Primary key, auto_increment |
-| institute_name | String | not null | User | — |
-| affiliation | String | not null | User | — |
-| location | String | not null | User | — |
-| contact_info | String | not null | User | Official email |
-| email_domain | String | not null | User | for auth verification |
+| institute_name | string | not null | User | — |
+| affiliation | string | not null | User | — |
+| location | string | not null | User | — |
+| contact_info | string | not null | User | Official email |
+| email_domain | string | not null | User | for auth verification |
 
 NOTE : If made for single college, this information will be setup as json file
-
----
-
-## 🏫 Data Given by College Management
 
 ---
 
@@ -77,7 +82,7 @@ NOTE : If made for single college, this information will be setup as json file
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|-----------|------------|----------|--------|
 | building_id | int | not null | System | Primary key, auto_increment |
-| building_name | String | not null | User | - |
+| building_name | string | not null | User | - |
 
 ### 2. Room Table (Classrooms / Labs)
 
@@ -85,7 +90,7 @@ NOTE : If made for single college, this information will be setup as json file
 |-------|-----------|------------|----------|--------|
 | room_id | int | not null | System | Primary key, auto_increment |
 | building_id | int | not null | User | Foreign key, M:1 |
-| room_num | String | not null | User | room num or lab name |
+| room_num | string | not null | User | room num or lab name |
 | room_type | enum | not null | User | `Class` (theory), `smart class` (projector), `Lab` |
 | capacity | int | not null | User | Maximum seating capacity |
 
@@ -99,7 +104,7 @@ NOTE: Building table and building_id only exist if college opt for multiple buil
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
 | department_id | int | not null | System | Primary key, auto_increment |
-| department_name | String | not null | User | — |
+| department_name | string | not null | User | — |
 
 ---
 
@@ -107,9 +112,9 @@ NOTE: Building table and building_id only exist if college opt for multiple buil
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| employee_id | String | not null | User | Primary key |
-| faculty_name | String | not null | User | — |
-| qualification | String | not null | User | - |
+| employee_id | string | not null | User | Primary key |
+| faculty_name | string | not null | User | — |
+| qualification | string | not null | User | - |
 
 
 ### 5. Course Table
@@ -117,7 +122,7 @@ NOTE: Building table and building_id only exist if college opt for multiple buil
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
 | course_id | int | not null | System | Primary key, auto_increment |
-| course_name | String | not null | User | — |
+| course_name | string | not null | User | — |
 | course_type | enum | not null | User | `major` / `minor` / `elective` |
 | department_id | int | not null | User | Foreign key, M:1 |
 
@@ -131,8 +136,8 @@ NOTE: Check if same course can be on different department (making M:M relation)
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| subject_code | String | not null | User | Primary key |
-| subject_name | String | not null | User | — |
+| subject_code | string | not null | User | Primary key |
+| subject_name | string | not null | User | — |
 | course_id | int | not null | User | Foreign key, M:1 |
 | total_theory_hours | int | not null | User | — |
 | total_practical_hour | int | not null | User | — |
@@ -145,12 +150,9 @@ NOTE: faculty is unavailable
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| employee_id | String | not null | User | Foreign key |
+| employee_id | string | not null | User | Foreign key |
 | timeslot_id | int | not null | User | — |
-| reason | String | — | User | Reason for unavailability |
-| status | enum  | - | User | Whether leave is approved or not |
-
-NOTE: add status only if needing approval from HOD (which will cause unnccesssary delay. HOD can view stat and can handle misuse of unavailibility)
+| reason | string | — | User | Reason for unavailability |
 
 ---
 
@@ -158,8 +160,8 @@ NOTE: add status only if needing approval from HOD (which will cause unnccesssar
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| enrollment_no | String | not null | User | Primary key |
-| student_name | String | not null | User | — |
+| enrollment_no | string | not null | User | Primary key |
+| student_name | string | not null | User | — |
 | department_id | int | not null | User | Foreign key, M:1 |
 | semester | enum(int) | not null | User | - |
 
@@ -183,7 +185,7 @@ NOTE: each lab / class is assign for what subjects
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
 | room_id | int | not null | User | Foreign key |
-| subject_code | String | not null | User | Foreign key |
+| subject_code | string | not null | User | Foreign key |
 
 ### 3. Faculty - Department (M:M)
 
@@ -212,7 +214,7 @@ NOTE: course taken by student
 
 | Field | Data Type | Constraint | Value By | Remark |
 |-------|------------|-------------|-----------|---------|
-| enrollment_no | String | not null | User | Foreign key |
+| enrollment_no | string | not null | User | Foreign key |
 | course_id | int | not null | User | Foreign key |
 
 ---
