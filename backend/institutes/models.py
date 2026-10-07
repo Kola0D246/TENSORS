@@ -1,17 +1,23 @@
 from django.db import models
 
-class TimeSlot(models.Model):
-    day = models.CharField(max_length=20)
-    period = models.IntegerField()
+class Periods(models.Model):
+    period = models.IntegerField(primary_key=True)
     start_time = models.TimeField()
     end_time = models.TimeField()
+
+class TimeSlot(models.Model):
+    day = models.CharField(max_length=20)
+    period = models.ForeignKey(Periods, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.day} {self.period}"
 
+class Building(models.Model):
+    building = models.CharField(max_length=200)
+
 class Room(models.Model):
     room_no = models.CharField(max_length= 200)
-    building_name = models.CharField(max_length=200)
+    building_name = models.ForeignKey(Building, on_delete=models.CASCADE)
     room_type = models.CharField(max_length=20, choices=[
         ('class', 'Class'), ('lab', 'Lab'), ('smartClass', 'Smart Class')
     ])
