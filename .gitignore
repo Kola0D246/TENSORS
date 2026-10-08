@@ -1,0 +1,17 @@
+# virtual env
+.venv/
+
+# cache
+__pycache__/
+
+# secret-variables
+.env
+.env.*
+!.env.example
+
+# database and migration
+db.sqlite3
+*.pyc
+
+# editor
+.vscode/
