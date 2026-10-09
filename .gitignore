@@ -9,8 +9,7 @@ __pycache__/
 .env.*
 !.env.example
 
-# database and migration
-db.sqlite3
+# database
 *.pyc
 
 # editor
